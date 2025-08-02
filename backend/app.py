@@ -237,6 +237,9 @@ Trả về code đã được comment hoàn chỉnh:
 # Khởi tạo code commenter
 commenter = CodeCommenter()
 
+# Thêm biến toàn cục để lưu context code đã comment gần nhất
+last_commented_code_context = {}
+
 @app.route('/api/health', methods=['GET'])
 @swag_from({
     'tags': ['health'],
@@ -376,10 +379,16 @@ def comment_code():
         result = commenter.process_code(code_content, language)
         
         if result["success"]:
+            # Lưu lại context cho chatbot (ở đây lưu luôn cả code gốc và code đã comment)
+            last_commented_code_context["context"] = {
+                "original_code": code_content,
+                "commented_code": result["commented_code"],
+                "language": language
+            }
             return jsonify(result), 200
         else:
             return jsonify(result), 500
-            
+
     except Exception as e:
         print(f"Error in comment_code endpoint: {e}")
         print(traceback.format_exc())
@@ -432,6 +441,86 @@ def get_supported_languages():
         "success": True,
         "languages": languages
     })
+
+@app.route('/api/chat', methods=['POST'])
+@swag_from({
+    'tags': ['chat'],
+    'summary': 'Gửi câu hỏi cho chatbot',
+    'description': 'Chatbot AI trả lời bằng Azure OpenAI.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'messages': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'role': {'type': 'string', 'example': 'user'},
+                                'content': {'type': 'string', 'example': 'Trình bày về LLM'}
+                            }
+                        }
+                    }
+                },
+                'example': {
+                    'messages': [
+                        {'role': 'user', 'content': 'Trình bày về LLM'}
+                    ]
+                }
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'Phản hồi từ chatbot',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'response': {'type': 'string'}
+                }
+            }
+        }
+    }
+})
+def chat_with_ai():
+    """Chat với AI sử dụng lại client đã có, có thể truyền thêm context về code đã comment"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"success": False, "error": "No JSON data provided"}), 400
+
+        messages = data.get("messages", [])
+        # Lọc bỏ message không hợp lệ
+        messages = [m for m in messages if isinstance(m.get("content"), str) and m.get("content").strip() != ""]
+
+        context = last_commented_code_context.get("context", None)
+
+        if not messages:
+            return jsonify({"success": False, "error": "messages is required"}), 400
+
+        if not commenter.client:
+            return jsonify({"success": False, "error": "AI client not initialized"}), 500
+
+        if context:
+            context_text = f"Đây là đoạn code đã được comment:\n\n{context['commented_code']}\n\nNgôn ngữ: {context['language']}"
+            messages = [{"role": "system", "content": context_text}] + messages
+
+        response = commenter.client.chat.completions.create(
+            model=commenter.deployment_name,
+            messages=messages,
+            temperature=0.7,
+            max_tokens=800
+        )
+
+        return jsonify({"success": True, "response": response.choices[0].message.content.strip()})
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return jsonify({"success": False, "error": str(e)}), 500
 
 if __name__ == '__main__':
     print("Starting Code Commenter API...")

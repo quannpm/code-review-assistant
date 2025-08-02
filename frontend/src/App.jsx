@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatBot from "./components/ChatBot";
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -266,6 +267,11 @@ console.log("Max in array:", result);`
           </div>
         )}
       </main>
+
+      {/* Thay vì chỉ <ChatBot /> */}
+      <div className="chatbot-container">
+        <ChatBot />
+      </div>
 
       <footer className="app-footer">
         <p>
