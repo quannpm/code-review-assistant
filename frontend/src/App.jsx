@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import ChatBot from "./components/ChatBot";
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ChatAssistant from './components/ChatAssistant';
+import HowToUse from './components/HowToUse';
+import CodeEditor from './components/CodeEditor';
 import './App.css';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:8888/api';
 
 function App() {
   const [code, setCode] = useState('');
@@ -15,73 +17,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [supportedLanguages, setSupportedLanguages] = useState([]);
-
-  // Sample code examples
-  const sampleCodes = {
-    java: `public class MaxFinder {
-    
-    public int findMax(int[] numbers) {
-        if (numbers == null || numbers.length == 0) {
-            throw new IllegalArgumentException("Array cannot be null or empty");
-        }
-        
-        int max = numbers[0];
-        for (int i = 1; i < numbers.length; i++) {
-            if (numbers[i] > max) {
-                max = numbers[i];
-            }
-        }
-        return max;
-    }
-    
-    public static void main(String[] args) {
-        MaxFinder finder = new MaxFinder();
-        int[] array = {5, 2, 9, 1, 7, 6};
-        int maxInArray = finder.findMax(array);
-        System.out.println("Max in array: " + maxInArray);
-    }
-}`,
-    python: `def find_max(numbers):
-    if not numbers:
-        raise ValueError("List cannot be empty")
-    
-    max_val = numbers[0]
-    for num in numbers[1:]:
-        if num > max_val:
-            max_val = num
-    return max_val
-
-def main():
-    numbers = [5, 2, 9, 1, 7, 6]
-    result = find_max(numbers)
-    print(f"Max in list: {result}")
-
-if __name__ == "__main__":
-    main()`,
-    javascript: `function findMax(numbers) {
-    if (!numbers || numbers.length === 0) {
-        throw new Error("Array cannot be null or empty");
-    }
-    
-    let max = numbers[0];
-    for (let i = 1; i < numbers.length; i++) {
-        if (numbers[i] > max) {
-            max = numbers[i];
-        }
-    }
-    return max;
-}
-
-const numbers = [5, 2, 9, 1, 7, 6];
-const result = findMax(numbers);
-console.log("Max in array:", result);`
-  };
+  const [fileInputRef, setFileInputRef] = useState(null);
+  const [chatVisible, setChatVisible] = useState(false);
 
   useEffect(() => {
-    // Fetch supported languages
+    // Fetch supported languages - Lấy danh sách ngôn ngữ được hỗ trợ
     const fetchLanguages = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/supported-languages`);
+        const response = await axios.get(`${API_BASE_URL}/languages`);
         if (response.data.success) {
           setSupportedLanguages(response.data.languages);
         }
@@ -91,50 +34,13 @@ console.log("Max in array:", result);`
     };
 
     fetchLanguages();
-    
-    // Set initial sample code
-    setCode(sampleCodes[language]);
   }, []);
 
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage);
-    setCode(sampleCodes[newLanguage] || '');
     setCommentedCode('');
     setTokensInfo(null);
     setError('');
-  };
-
-  const handleCommentCode = async () => {
-    if (!code.trim()) {
-      setError('Vui lòng nhập code để comment');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    setCommentedCode('');
-
-    try {
-      const response = await axios.post(`${API_BASE_URL}/comment-code`, {
-        code: code,
-        language: language
-      });
-
-      if (response.data.success) {
-        setCommentedCode(response.data.commented_code);
-        setTokensInfo(response.data.tokens_info || null);
-      } else {
-        setError(response.data.error || 'Có lỗi xảy ra khi xử lý code');
-      }
-    } catch (err) {
-      console.error('Error commenting code:', err);
-      setError(
-        err.response?.data?.error || 
-        'Không thể kết nối đến server. Vui lòng kiểm tra backend đã chạy chưa.'
-      );
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleClearAll = () => {
@@ -144,57 +50,218 @@ console.log("Max in array:", result);`
     setError('');
   };
 
-  const handleLoadSample = () => {
-    setCode(sampleCodes[language] || '');
-    setCommentedCode('');
-    setTokensInfo(null);
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file size (limit to 5MB) - Kiểm tra kích thước file (giới hạn 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File is too large. Please select a file smaller than 5MB.');
+      return;
+    }
+
+    // Check file type - Kiểm tra loại file
+    const allowedExtensions = ['.txt', '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c', '.cs', '.php', '.rb', '.go', '.rs', '.swift', '.kt', '.scala', '.clj', '.sh', '.sql', '.html', '.css', '.json', '.xml', '.yaml', '.yml'];
+    const fileName = file.name.toLowerCase();
+    const isAllowed = allowedExtensions.some(ext => fileName.endsWith(ext));
+    
+    if (!isAllowed) {
+      setError('File format not supported. Please select a valid code file.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target.result;
+      setCode(content);
+      setCommentedCode('');
+      setTokensInfo(null);
+      setError('');
+      
+      // Auto-detect language from file extension - Tự động phát hiện ngôn ngữ từ phần mở rộng file
+      const ext = fileName.split('.').pop();
+      const languageMap = {
+        'js': 'javascript',
+        'jsx': 'javascript',
+        'ts': 'typescript',
+        'tsx': 'typescript',
+        'py': 'python',
+        'java': 'java',
+        'cpp': 'cpp',
+        'c': 'c',
+        'cs': 'csharp',
+        'php': 'php',
+        'rb': 'ruby',
+        'go': 'go',
+        'rs': 'rust',
+        'swift': 'swift',
+        'kt': 'kotlin',
+        'scala': 'scala',
+        'clj': 'clojure',
+        'sh': 'bash',
+        'sql': 'sql'
+      };
+      
+      if (languageMap[ext]) {
+        setLanguage(languageMap[ext]);
+      }
+    };
+    
+    reader.onerror = () => {
+      setError('Cannot read file. Please try again.');
+    };
+    
+    reader.readAsText(file);
+    
+    // Reset input value to allow selecting the same file again - Reset giá trị input để cho phép chọn lại cùng file
+    event.target.value = '';
+  };
+
+  const triggerFileUpload = () => {
+    if (fileInputRef) {
+      fileInputRef.click();
+    }
+  };
+
+  const toggleChat = () => {
+    setChatVisible(!chatVisible);
+  };
+
+  const handleChatResult = (result, tokensData) => {
+    setCommentedCode(result);
+    setTokensInfo(tokensData);
     setError('');
   };
+
+  // Quick Action handlers - Xử lý các Quick Action
+  const handleQuickAction = async (actionType, prompt) => {
+    if (!code.trim()) {
+      setError('Please enter code before using Quick Action');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    const message = `${prompt}\n\n\`\`\`${language}\n${code}\n\`\`\``;
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/chat`, {
+        message: message,
+        history: [],
+        is_quick_action: true
+      });
+
+      if (response.data.success) {
+        setCommentedCode(response.data.response);
+        setTokensInfo(response.data.tokens_info);
+        setError('');
+      } else {
+        setError(response.data.error || 'An error occurred while processing Quick Action');
+      }
+    } catch (err) {
+      console.error('Quick Action error:', err);
+      setError('Unable to connect to AI Assistant');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCommentCode = () => handleQuickAction('comment', 'Add detailed comments in Vietnamese to this code, explain what each part does:');
+  const handleFindBugs = () => handleQuickAction('debug', 'Find and fix bugs in this code:');
+  const handleOptimize = () => handleQuickAction('optimize', 'Optimize the performance of this code:');
+  const handleGenerateTests = () => handleQuickAction('test', 'Generate unit tests for this code:');
 
   return (
     <div className="App">
       <header className="app-header">
-        <h1>🚀 Code Commenter</h1>
-        <p>Tự động tạo comment cho code sử dụng AI</p>
+        <h1>🤖 AI Programming Assistant</h1>
+        <p>Smart programming support with AI - Comment code, Debug, Optimize & More</p>
       </header>
 
       <main className="app-main">
         <div className="controls">
-          <div className="language-selector">
-            <label htmlFor="language">Ngôn ngữ lập trình:</label>
-            <select
-              id="language"
-              value={language}
-              onChange={(e) => handleLanguageChange(e.target.value)}
-            >
-              {supportedLanguages.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
+          <div className="controls-left">
+            <div className="language-selector">
+              <label htmlFor="language">Programming Language:</label>
+              <select
+                id="language"
+                value={language}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+              >
+                {supportedLanguages.map((lang) => (
+                  <option key={lang.value} value={lang.value}>
+                    {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="action-buttons">
+              <input
+                type="file"
+                ref={(ref) => setFileInputRef(ref)}
+                onChange={handleFileUpload}
+                accept=".txt,.js,.jsx,.ts,.tsx,.py,.java,.cpp,.c,.cs,.php,.rb,.go,.rs,.swift,.kt,.scala,.clj,.sh,.sql,.html,.css,.json,.xml,.yaml,.yml"
+                style={{ display: 'none' }}
+              />
+              <button
+                onClick={triggerFileUpload}
+                className="btn btn-secondary"
+              >
+                📁 Upload File
+              </button>
+              <button
+                onClick={handleClearAll}
+                className="btn btn-secondary"
+              >
+                🗑️ Clear All
+              </button>
+            </div>
           </div>
 
-          <div className="action-buttons">
-            <button
-              onClick={handleLoadSample}
-              className="btn btn-secondary"
-            >
-              📝 Load Sample Code
-            </button>
-            <button
-              onClick={handleClearAll}
-              className="btn btn-secondary"
-            >
-              🗑️ Clear All
-            </button>
-            <button
-              onClick={handleCommentCode}
-              disabled={loading || !code.trim()}
-              className="btn btn-primary"
-            >
-              {loading ? '⏳ Đang xử lý...' : '✨ Comment Code'}
-            </button>
+          <div className="controls-right">
+            {/* Quick Actions */}
+            <div className="quick-actions">
+              <div className="quick-action-buttons">
+                <button
+                  onClick={handleCommentCode}
+                  className="btn btn-quick-action"
+                  disabled={loading || !code.trim()}
+                  title="Add detailed comments to code"
+                >
+                  <span style={{fontSize: '1rem', marginRight: '0.4rem'}}>💬</span>
+                  Comment Code
+                </button>
+                <button
+                  onClick={handleFindBugs}
+                  className="btn btn-quick-action"
+                  disabled={loading || !code.trim()}
+                  title="Find and fix bugs in code"
+                >
+                  <span style={{fontSize: '1rem', marginRight: '0.4rem'}}>🐛</span>
+                  Find Bugs
+                </button>
+                <button
+                  onClick={handleOptimize}
+                  className="btn btn-quick-action"
+                  disabled={loading || !code.trim()}
+                  title="Optimize code performance"
+                >
+                  <span style={{fontSize: '1rem', marginRight: '0.4rem'}}>⚡</span>
+                  Optimize
+                </button>
+                <button
+                  onClick={handleGenerateTests}
+                  className="btn btn-quick-action"
+                  disabled={loading || !code.trim()}
+                  title="Generate unit tests for code"
+                >
+                  <span style={{fontSize: '1rem', marginRight: '0.4rem'}}>🧪</span>
+                  Generate Tests
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -207,11 +274,11 @@ console.log("Max in array:", result);`
         <div className="code-sections">
           <div className="code-section">
             <h3>📥 Input</h3>
-            <textarea
+            <CodeEditor
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder={`Nhập ${language} code tại đây...`}
-              className="code-input"
+              onChange={setCode}
+              language={language}
+              placeholder={`Enter or paste ${language} code here...`}
               rows={15}
             />
           </div>
@@ -221,7 +288,7 @@ console.log("Max in array:", result);`
             {loading ? (
               <div className="loading-container">
                 <div className="loading-spinner"></div>
-                <p>Đang xử lý code bằng AI...</p>
+                <p>Processing code with AI...</p>
               </div>
             ) : commentedCode ? (
               <div className="code-output">
@@ -236,7 +303,7 @@ console.log("Max in array:", result);`
               </div>
             ) : (
               <div className="placeholder">
-                Code đã được comment sẽ hiển thị tại đây...
+                AI Assistant output will be displayed here...
               </div>
             )}
           </div>
@@ -244,22 +311,16 @@ console.log("Max in array:", result);`
 
         {commentedCode && (
           <div className="stats">
-            <div className="stats-row">
-              <p>
-                📊 <strong>Thống kê:</strong> Code gốc {code.length} ký tự → Code đã comment {commentedCode.length} ký tự
-              </p>
-            </div>
-            
             {tokensInfo && (
-              <div className="stats-row tokens-info">
+              <div className="stats-row">
                 <p>
-                  🔢 <strong>Tokens:</strong> 
+                  📊 <strong>Tokens:</strong> 
                   Input ~{tokensInfo.estimated_input_tokens} tokens | 
                   Max allowed: {tokensInfo.max_tokens_used} tokens | 
                   Output ~{tokensInfo.estimated_output_tokens} tokens
                 </p>
                 <p className="cost-estimate">
-                  💰 <strong>Ước tính chi phí:</strong> 
+                  💰 <strong>Cost estimate:</strong> 
                   ~${((tokensInfo.estimated_input_tokens * 0.00015 + tokensInfo.estimated_output_tokens * 0.0006) / 1000).toFixed(4)} USD
                 </p>
               </div>
@@ -268,18 +329,31 @@ console.log("Max in array:", result);`
         )}
       </main>
 
-      {/* Thay vì chỉ <ChatBot /> */}
-      <div className="chatbot-container">
-        <ChatBot />
-      </div>
+      <HowToUse />
 
       <footer className="app-footer">
         <p>
-          💡 <strong>Step 1:</strong> Chọn ngôn ngữ và nhập code → 
-          <strong> Step 2:</strong> AI xử lý và tạo comment → 
-          <strong> Step 3:</strong> Nhận kết quả code đã được comment
+          © 2025 <strong>[AI-Elevate] X-Eyes Team</strong> - All rights reserved
         </p>
       </footer>
+
+      {/* Floating Chat Button */}
+      <button
+        onClick={toggleChat}
+        className={`floating-chat-btn ${chatVisible ? 'active' : ''}`}
+        title={chatVisible ? "Close AI Assistant" : "Open AI Assistant"}
+      >
+        {chatVisible ? '✕' : '🤖'}
+      </button>
+
+      {/* Chat Assistant Sidebar */}
+      <ChatAssistant 
+        isVisible={chatVisible} 
+        onToggle={toggleChat}
+        currentCode={code}
+        currentLanguage={language}
+        onChatResult={handleChatResult}
+      />
     </div>
   );
 }

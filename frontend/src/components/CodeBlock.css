@@ -1,0 +1,126 @@
+/* CodeBlock Component Styles */
+.code-block-container {
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e1e8ed;
+  background: #f7f9fa;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.code-language {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.copy-button.copied {
+  background: rgba(76, 175, 80, 0.8);
+  border-color: rgba(76, 175, 80, 1);
+}
+
+.copy-text {
+  font-weight: 500;
+}
+
+/* Syntax Highlighter Customizations */
+.code-block-container pre {
+  margin: 0 !important;
+  padding: 16px !important;
+  background: #2d3748 !important;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.code-block-container code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+/* Custom scrollbar for code block */
+.code-block-container pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.code-block-container pre::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.code-block-container pre::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 4px;
+}
+
+.code-block-container pre::-webkit-scrollbar-thumb:hover {
+  background: #618bb8;
+}
+
+/* Line numbers styling */
+.code-block-container .linenumber {
+  color: #4a5568 !important;
+  margin-right: 16px !important;
+  user-select: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .code-block-container {
+    margin: 8px 0;
+    border-radius: 6px;
+  }
+  
+  .code-block-header {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .copy-button {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+  
+  .code-block-container code {
+    font-size: 12px !important;
+  }
+  
+  .code-block-container pre {
+    padding: 12px !important;
+    max-height: 300px;
+  }
+}

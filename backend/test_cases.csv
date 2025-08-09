@@ -1,0 +1,16 @@
+Test ID,Scenario,Input,Expected Output,Category,Priority,Status
+TC_CR_01,Submit code and get line-by-line comments,"Python function without comments (e.g., def calculate_total(items): return sum(item.price for item in items))","AI returns the same code with meaningful inline comments explaining each step",Code Review,High,Not Tested
+TC_CR_02,Submit already-commented code,"Code that already has comments (e.g., # This is a comment def func(): pass)","AI improves unclear comments or leaves them untouched if appropriate",Code Review,Medium,Not Tested
+TC_CR_03,Ask off-topic question,"What's the weather today?","AI responds: 'Tôi chỉ có thể hỗ trợ các câu hỏi liên quan đến mã nguồn.'",Input Validation,High,Not Tested
+TC_CR_04,Multi-turn conversation context memory,"1. User: 'Here's part 1 of my code' → 2. User: 'Now review part 2'","AI should remember part 1 and provide comments considering both parts",Context Memory,High,Not Tested
+TC_CR_05,Handle greeting or small talk naturally,"Hi / Alo","AI responds with a friendly welcome and reminds user of its coding focus",Natural Language,Medium,Not Tested
+TC_CR_06,Language-aware reply,"Giúp tôi review đoạn code sau bằng tiếng Việt + code","AI responds with code comments in Vietnamese",Localization,High,Not Tested
+TC_CR_07,Commenting requirement-specific code,"Input: 'Comment this function focusing on error handling' + code","AI provides comments emphasizing error handling logic",Specific Requirements,Medium,Not Tested
+TC_CR_08,Handle ambiguous requests,"Comment my code with unclear or minimal code provided","AI requests more detail or clarifies the user's intent",Error Handling,Medium,Not Tested
+TC_CR_09,Performance with large code blocks,"Submit a large file (>500 lines) for commenting","AI handles large input without timeout or errors",Performance,Medium,Not Tested
+TC_CR_10,Handle multiple programming languages,"Submit code in different languages (Java Python JavaScript)","AI correctly identifies language and provides appropriate comments",Multi-Language,High,Not Tested
+TC_CR_11,Handle syntax errors in code,"Submit code with syntax errors","AI identifies errors and suggests corrections along with comments",Error Handling,High,Not Tested
+TC_CR_12,Empty or whitespace-only input,"Send empty message or only spaces","AI prompts user to provide code for review",Input Validation,Medium,Not Tested
+TC_CR_13,Special characters and Unicode,"Code with special characters and Unicode strings","AI handles special characters correctly in comments",Edge Cases,Low,Not Tested
+TC_CR_14,Code with security vulnerabilities,"Code with potential security issues (SQL injection etc)","AI identifies and comments on security concerns",Security,High,Not Tested
+TC_CR_15,API response time,"Normal code review request","Response time should be under 10 seconds",Performance,Medium,Not Tested
