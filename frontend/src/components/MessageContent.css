@@ -1,0 +1,418 @@
+/* MessageContent.css - Styling for markdown content in chat messages */
+
+.message-content-wrapper {
+  line-height: 1.7;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: left;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+/* Paragraphs */
+.markdown-paragraph {
+  margin: 0 0 1.2em 0;
+  color: inherit;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+
+.markdown-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings */
+.markdown-h1, .markdown-h2, .markdown-h3, 
+.markdown-h4, .markdown-h5, .markdown-h6 {
+  margin: 1.8em 0 0.8em 0;
+  font-weight: 600;
+  color: inherit;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.markdown-h1:first-child, .markdown-h2:first-child, 
+.markdown-h3:first-child, .markdown-h4:first-child, 
+.markdown-h5:first-child, .markdown-h6:first-child {
+  margin-top: 0;
+}
+
+.markdown-h1 { 
+  font-size: 1.6em; 
+  border-bottom: 2px solid currentColor; 
+  padding-bottom: 0.4em; 
+  margin-bottom: 1em;
+}
+.markdown-h2 { 
+  font-size: 1.4em; 
+  border-bottom: 1px solid currentColor; 
+  padding-bottom: 0.3em; 
+  margin-bottom: 0.8em;
+}
+.markdown-h3 { 
+  font-size: 1.25em; 
+  margin-bottom: 0.6em;
+}
+.markdown-h4 { 
+  font-size: 1.15em; 
+  margin-bottom: 0.5em;
+}
+.markdown-h5 { 
+  font-size: 1.05em; 
+  margin-bottom: 0.4em;
+}
+.markdown-h6 { 
+  font-size: 1em; 
+  opacity: 0.85; 
+  margin-bottom: 0.4em;
+}
+
+/* Lists */
+.markdown-ul, .markdown-ol {
+  margin: 1.2em 0;
+  padding-left: 1.8em;
+}
+
+.markdown-li {
+  margin: 0.4em 0;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.markdown-ul .markdown-ul,
+.markdown-ol .markdown-ol,
+.markdown-ul .markdown-ol,
+.markdown-ol .markdown-ul {
+  margin: 0.3em 0;
+}
+
+/* Blockquotes */
+.markdown-blockquote {
+  margin: 1.5em 0;
+  padding: 1em 1.5em;
+  border-left: 4px solid;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.03);
+  text-align: left;
+  line-height: 1.6;
+}
+
+.message-content-wrapper.user .markdown-blockquote {
+  border-left-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.message-content-wrapper.bot .markdown-blockquote {
+  border-left-color: #007bff;
+  background: rgba(0, 123, 255, 0.08);
+}
+
+/* Code blocks */
+.code-block-wrapper {
+  margin: 1.5em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.message-content-wrapper.user .code-block-wrapper {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.message-content-wrapper.bot .code-block-wrapper {
+  border-color: #dee2e6;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75em 1.2em;
+  font-size: 0.85em;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.message-content-wrapper.user .code-block-header {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.message-content-wrapper.bot .code-block-header {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.code-language {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.copy-button {
+  padding: 0.25em 0.5em;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.message-content-wrapper.user .copy-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.message-content-wrapper.user .copy-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.message-content-wrapper.bot .copy-button {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.message-content-wrapper.bot .copy-button:hover {
+  background: #dee2e6;
+}
+
+.code-block {
+  margin: 0;
+  padding: 1.2em 1.5em;
+  overflow-x: auto;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  tab-size: 4;
+}
+
+.message-content-wrapper.user .code-block {
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.message-content-wrapper.bot .code-block {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.code-block code {
+  background: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-family: inherit;
+}
+
+/* Inline code */
+.inline-code {
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.88em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.message-content-wrapper.user .inline-code {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.message-content-wrapper.bot .inline-code {
+  background: #e9ecef;
+  color: #e83e8c;
+}
+
+/* Tables */
+.table-wrapper {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.message-content-wrapper.user .table-wrapper {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.message-content-wrapper.bot .table-wrapper {
+  border-color: #dee2e6;
+}
+
+.markdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  text-align: left;
+}
+
+.markdown-th, .markdown-td {
+  padding: 0.8em 1em;
+  text-align: left;
+  border-bottom: 1px solid;
+  vertical-align: top;
+}
+
+.message-content-wrapper.user .markdown-th,
+.message-content-wrapper.user .markdown-td {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.message-content-wrapper.bot .markdown-th,
+.message-content-wrapper.bot .markdown-td {
+  border-color: #dee2e6;
+}
+
+.markdown-th {
+  font-weight: 600;
+}
+
+.message-content-wrapper.user .markdown-th {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.message-content-wrapper.bot .markdown-th {
+  background: #f8f9fa;
+}
+
+.markdown-table tr:last-child .markdown-td {
+  border-bottom: none;
+}
+
+/* Links */
+.markdown-link {
+  color: inherit;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.markdown-link:hover {
+  opacity: 0.8;
+}
+
+.message-content-wrapper.user .markdown-link {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.message-content-wrapper.bot .markdown-link {
+  color: #007bff;
+}
+
+/* Strong and emphasis */
+.markdown-strong {
+  font-weight: 600;
+}
+
+.markdown-em {
+  font-style: italic;
+}
+
+/* Better text flow and spacing */
+.message-content-wrapper * {
+  max-width: 100%;
+}
+
+.message-content-wrapper p + h1,
+.message-content-wrapper p + h2,
+.message-content-wrapper p + h3,
+.message-content-wrapper p + h4,
+.message-content-wrapper p + h5,
+.message-content-wrapper p + h6 {
+  margin-top: 2em;
+}
+
+.message-content-wrapper h1 + p,
+.message-content-wrapper h2 + p,
+.message-content-wrapper h3 + p,
+.message-content-wrapper h4 + p,
+.message-content-wrapper h5 + p,
+.message-content-wrapper h6 + p {
+  margin-top: 0.5em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .message-content-wrapper {
+    line-height: 1.6;
+  }
+  
+  .markdown-paragraph {
+    text-align: left;
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+  
+  .code-block {
+    font-size: 0.8em;
+    padding: 1em;
+  }
+  
+  .code-block-header {
+    padding: 0.5em 1em;
+    font-size: 0.8em;
+  }
+  
+  .markdown-table {
+    font-size: 0.8em;
+  }
+  
+  .markdown-th, .markdown-td {
+    padding: 0.5em 0.7em;
+  }
+  
+  .markdown-h1 { font-size: 1.4em; }
+  .markdown-h2 { font-size: 1.3em; }
+  .markdown-h3 { font-size: 1.2em; }
+  
+  .markdown-ul, .markdown-ol {
+    padding-left: 1.5em;
+  }
+  
+  .markdown-blockquote {
+    padding: 0.8em 1.2em;
+    margin: 1.2em 0;
+  }
+}
+
+/* Syntax highlighting overrides for better visibility */
+.message-content-wrapper.user .hljs {
+  background: rgba(0, 0, 0, 0.2) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.message-content-wrapper.user .hljs-keyword,
+.message-content-wrapper.user .hljs-selector-tag,
+.message-content-wrapper.user .hljs-literal,
+.message-content-wrapper.user .hljs-title {
+  color: #ff7b7b !important;
+}
+
+.message-content-wrapper.user .hljs-string,
+.message-content-wrapper.user .hljs-doctag {
+  color: #a8e6cf !important;
+}
+
+.message-content-wrapper.user .hljs-comment,
+.message-content-wrapper.user .hljs-quote {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-style: italic;
+}
+
+.message-content-wrapper.user .hljs-number,
+.message-content-wrapper.user .hljs-atom {
+  color: #ffd93d !important;
+}
+
+.message-content-wrapper.user .hljs-function .hljs-title {
+  color: #74c0fc !important;
+}

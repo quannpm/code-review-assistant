@@ -1,0 +1,14 @@
+{
+  "file_id": "d279eb79-42ef-49b2-bf55-b5098f8dc9c4",
+  "original_filename": "java_code_conventions_vi.md",
+  "title": "java_code_conventions_vi.md",
+  "stored_filename": "20250822_192005_java_code_conventions_vi.md",
+  "file_path": "uploads/20250822_192005_java_code_conventions_vi.md",
+  "file_size": 2040,
+  "file_hash": "1b091eebed22f22958ff74809b8841d4",
+  "pages_count": 1,
+  "text_length": 1801,
+  "upload_time": "2025-08-22T19:20:05.798006",
+  "description": "Uploaded on 8/22/2025, 7:20:05 PM",
+  "extracted_text": "# Java Code Conventions\n\n## 1. Quy tắc đặt tên (Naming Conventions)\n\n-   **Class**: Viết hoa chữ cái đầu của mỗi từ. Ví dụ: `CustomerOrder`,\n    `StringBuilder`.\n-   **Interface**: Tương tự class. Ví dụ: `Runnable`, `Serializable`.\n-   **Method**: Chữ cái đầu thường, các từ sau viết hoa chữ cái đầu. Ví\n    dụ: `calculateTotal()`, `toString()`.\n-   **Biến (variable)**: Camel case, bắt đầu bằng chữ thường. Ví dụ:\n    `userName`, `orderCount`.\n-   **Hằng số (constant)**: Viết hoa toàn bộ, cách nhau bằng `_`. Ví dụ:\n    `MAX_SIZE`, `PI`.\n-   **Package**: Viết thường toàn bộ, ngắn gọn. Ví dụ:\n    `com.example.project`.\n\n## 2. Quy tắc định dạng (Formatting Conventions)\n\n-   Thụt lề bằng **4 khoảng trắng** (không dùng tab).\n\n-   Mỗi dòng code không quá **120 ký tự**.\n\n-   Mở dấu ngoặc `{` cùng dòng với khai báo.\n\n    ``` java\n    if (condition) {\n        // code\n    } else {\n        // code\n    }\n    ```\n\n## 3. Quy tắc comment (Comment Conventions)\n\n-   Dùng `//` cho comment ngắn.\n\n-   Dùng `/* ... */` cho block comment.\n\n-   Dùng `/** ... */` cho Javadoc:\n\n    ``` java\n    /**\n     * Tính tổng 2 số nguyên.\n     * @param a số thứ nhất\n     * @param b số thứ hai\n     * @return tổng a + b\n     */\n    public int sum(int a, int b) {\n        return a + b;\n    }\n    ```\n\n## 4. Quy tắc tổ chức code (Code Organization)\n\n-   Thứ tự trong class:\n    1.  Hằng số (constants)\n    2.  Thuộc tính (fields)\n    3.  Constructor\n    4.  Public methods\n    5.  Protected methods\n    6.  Private methods\n-   Mỗi class nằm trong **1 file riêng**, tên file trùng với tên class.\n\n## 5. Một số quy tắc khác\n\n-   Tránh dùng `magic numbers`, thay bằng hằng số có tên rõ ràng.\n-   Luôn kiểm tra `null` trước khi sử dụng đối tượng.\n-   Ưu tiên sử dụng `StringBuilder` thay cho phép cộng chuỗi trong vòng\n    lặp.\n"
+}
